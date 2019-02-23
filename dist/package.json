@@ -10,5 +10,8 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^4.0.5"
+  },
+  "dependencies": {
+    "command-line-args": "^5.0.2"
   }
 }

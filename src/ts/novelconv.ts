@@ -8,14 +8,15 @@ class NovelFormatConverter{
     line: number;
     textline: number;
     title: string;
-    sections: {[key: number]: string}[];;
+    sections: {[key: number]: string}[];lines: string[];
     chapters: string[];
     innersection: number;
     inntertext: string[];
     section_change: boolean;
     path: string;
 
-    constructor(){
+    constructor(lines :string[]){
+        this.lines = lines;
         this.chapter = 0;
         this.section = 1;
         this.chapter_text = '';
@@ -117,11 +118,11 @@ class NovelFormatConverter{
         return htmltext;
     }
 
-    convertAll(f: { [x: string]: any; }): string {
+    convertAll(): string {
         let text = String.raw`<div id="_${this.innersection}">`;
         this.section_change =false;
-        for (let row in f) {
-            let s =  this.convert(f[row]);
+        for (let row in this.lines) {
+            let s =  this.convert(this.lines[row]);
             if(this.section_change){
                 s = String.raw`</div><div id="_${this.innersection}">${s}`;
                 this.section_change =false;
@@ -132,12 +133,12 @@ class NovelFormatConverter{
         return text;
     };
 
-    convertSection(f: { [x: string]: any; },num: number): string {
+    convertSection(num: number): string {
         this.section_change =false;
         let text = '';
         let ret_text = '';
-        for (let row in f){
-            let s = this.convert(f[row]);
+        for (let row in this.lines){
+            let s = this.convert(this.lines[row]);
             if(this.section_change){
                 this.section_change =false;
                 if(this.innersection == num + 1)
@@ -148,6 +149,45 @@ class NovelFormatConverter{
             text += s;
         }
         return ret_text;
+    }
+
+
+    createIndex(opt :any) :string {
+        const label = template`<label for="label${"chapter"}">${"num"} ${"text"}</label><input type="radio" name="menu" id="label${"chapter"}" class="cssacc" />`
+        let ftext :string;
+        ftext = '';
+         //章リスト
+        const chapters = this.getChapters();
+        let i=1;
+        let k=0;
+        //目次作成
+        for (let chap in chapters){
+            chap = chapters[chap];
+
+            k ++;
+            const cstr = numHan2Zen(i);
+            ftext += label({chapter: i,num: cstr,text: chap});
+            ftext += '<div class="accshow">'
+            if ( opt['section'])
+                ftext += String.raw`<a href="${opt['self']}&section=${k}">${chap}</a> <br>`;
+            else
+                ftext += String.raw`<a href="#c${i}">${chap}</a> <br>`;
+            const sec = this.getSections(i);
+            let j = 1;
+            for (let ses in sec){
+                ses = sec[ses];
+                k ++;
+                if ( opt['section'] )
+                    ftext += String.raw`<a href="${opt['self']}&section=${k}">${ses}</a> <br>`;
+                else
+                    ftext += String.raw`<a href="#${i}_${j}">${ses}</a> <br>`;
+                j ++;
+            }
+            i ++;
+            ftext += '</div>';
+        }
+
+        return ftext;
     }
 }
 
@@ -175,9 +215,9 @@ function template(strings :any, ...keys :any) {
 
 //HTMLに成形
 
-  function createHTMLPage(text: string,opt: { [x: string]: any; }) : string {
+function createHTMLPage(obj: string | NovelFormatConverter,opt: { [x: string]: any; }) : string {
     let style: string;
-    let ftext = '';
+    let text: string;
     if ( 'style' in opt ){
         style = opt['style'][0];
     }else{
@@ -201,55 +241,35 @@ function template(strings :any, ...keys :any) {
     const prefooter = '</div></div>';
     const footer =  template`<div id="footer" class="footer"><div class="accbox">${"footer"}</div></div>`;
     const postfotter = '</body></html>';
-    const label = template`<label for="label${"chapter"}">${"num"} ${"text"}</label><input type="radio" name="menu" id="label${"chapter"}" class="cssacc" />`
 
     if  (!opt['js_path'])  opt['js_path'] = './';
     if  (!opt['css_path'])  opt['css_path'] = './';
     if (!opt['mode'] ) opt['mode'] = 'cgi';
 
-    const lines:Array<String> = text.split(/\n/g);
-    const conv  = new NovelFormatConverter();
-    if ( opt['section']){
-        text = conv.convertSection(lines,Number(opt['section'][0]));
-    }  else {
-        text = conv.convertAll(lines);
+    let conv;
+    if ( typeof obj  === 'string') {
+        let text:string = obj;
+        const lines:Array<string> = text.split(/\n/g);
+        conv  = new NovelFormatConverter(lines);
+    } else {
+        conv = obj;
     }
+
+    if ( opt['section']){
+        text = conv.convertSection(Number(opt['section'][0]));
+    }  else {
+        text = conv.convertAll();
+    }
+
+    let ftext = conv.createIndex(opt);
+
     if (style == 'bone'){
         const h = header({title:conv.title,css_path:opt['css_path'],js_path:opt['js_path'],mode:opt['mode']});
         const f = footer({footer:ftext})
         const html = h + prefooter + f + postfotter;
         return html;
     }
-    //章リスト
-    const chapters = conv.getChapters();
-    let i=1;
-    let k=0;
-    //目次作成
-    for (let chap in chapters){
-        chap = chapters[chap];
 
-        k ++;
-        const cstr = numHan2Zen(i);
-        ftext += label({chapter: i,num: cstr,text: chap});
-        ftext += '<div class="accshow">'    
-        if ( opt['section'])
-            ftext += String.raw`<a href="${opt['self']}&section=${k}">${chap}</a> <br>`;
-        else
-            ftext += String.raw`<a href="#c${i}">${chap}</a> <br>`;
-        const sec = conv.getSections(i);
-        let j = 1;
-        for (let ses in sec){
-            ses = sec[ses];
-            k ++;
-            if ( opt['section'] )
-                ftext += String.raw`<a href="${opt['self']}&section=${k}">${ses}</a> <br>`;
-            else
-                ftext += String.raw`<a href="#${i}_${j}">${ses}</a> <br>`;
-            j ++;
-        }
-        i ++;
-        ftext += '</div>';
-    }
     const h = header({title :conv.title,css_path: opt['css_path'],js_path: opt['js_path'],mode: opt['mode']});
     const f = footer({footer: ftext});
     let html = ''
@@ -262,7 +282,7 @@ function template(strings :any, ...keys :any) {
             if(n>0)
                 html += String.raw`<p><a href="${opt['self']}&section=${n-1}">［前へ］</a></p>`;
             html += text
-            if(k>n)
+            if(conv.innersection>n)
                 html += String.raw`<p><a href="${opt['self']}&section=${n+1}">［次へ］</a></p><p></p>`;
         } else
             html += text;
@@ -287,11 +307,12 @@ function fromFile(filename: string){
             text = '　　　　　　　　　　　　　　　　　ファイルが見つかりません　　　　　　　　　　　　　　　　';
         }
     }
-    return text;
+    const lines:Array<string> = text.split(/\n/g);
+    const conv  = new NovelFormatConverter(lines);
+    return conv;
 }
 
-//debug
-let opt = {css_path: './assets/css',js_path: './assets/js'};
-let text = fromFile('/Users/takeshisaito/Dropbox/創作/中世ファンタジーのリアライズ問題.nvl');
-let html = createHTMLPage(text,opt);
-console.log(html);
+
+exports.NovelFormatConverter = NovelFormatConverter;
+exports.fromFile = fromFile;
+exports.createHTMLPage = createHTMLPage;

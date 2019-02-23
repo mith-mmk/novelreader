@@ -5,7 +5,8 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
 };
 // version 0.0.1
 var NovelFormatConverter = /** @class */ (function () {
-    function NovelFormatConverter() {
+    function NovelFormatConverter(lines) {
+        this.lines = lines;
         this.chapter = 0;
         this.section = 1;
         this.chapter_text = '';
@@ -21,7 +22,6 @@ var NovelFormatConverter = /** @class */ (function () {
         this.section_change = true;
         this.path = './';
     }
-    ;
     NovelFormatConverter.prototype.setPath = function (path) {
         this.path = path;
     };
@@ -96,11 +96,11 @@ var NovelFormatConverter = /** @class */ (function () {
         var htmltext = String.raw(__makeTemplateObject(["<p id=P", "_", "_ ", ">", "</p>"], ["<p id=P", "_", "_ ", ">", "</p>"]), this.chapter, this.section, this.line, formated);
         return htmltext;
     };
-    NovelFormatConverter.prototype.convertAll = function (f) {
+    NovelFormatConverter.prototype.convertAll = function () {
         var text = String.raw(__makeTemplateObject(["<div id=\"_", "\">"], ["<div id=\"_", "\">"]), this.innersection);
         this.section_change = false;
-        for (var row in f) {
-            var s = this.convert(f[row]);
+        for (var row in this.lines) {
+            var s = this.convert(this.lines[row]);
             if (this.section_change) {
                 s = String.raw(__makeTemplateObject(["</div><div id=\"_", "\">", ""], ["</div><div id=\"_", "\">", ""]), this.innersection, s);
                 this.section_change = false;
@@ -111,12 +111,12 @@ var NovelFormatConverter = /** @class */ (function () {
         return text;
     };
     ;
-    NovelFormatConverter.prototype.convertSection = function (f, num) {
+    NovelFormatConverter.prototype.convertSection = function (num) {
         this.section_change = false;
         var text = '';
         var ret_text = '';
-        for (var row in f) {
-            var s = this.convert(f[row]);
+        for (var row in this.lines) {
+            var s = this.convert(this.lines[row]);
             if (this.section_change) {
                 this.section_change = false;
                 if (this.innersection == num + 1)
@@ -127,6 +127,41 @@ var NovelFormatConverter = /** @class */ (function () {
             text += s;
         }
         return ret_text;
+    };
+    NovelFormatConverter.prototype.createIndex = function (opt) {
+        var label = template(__makeTemplateObject(["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"], ["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"]), "chapter", "num", "text", "chapter");
+        var ftext;
+        ftext = '';
+        //章リスト
+        var chapters = this.getChapters();
+        var i = 1;
+        var k = 0;
+        //目次作成
+        for (var chap in chapters) {
+            chap = chapters[chap];
+            k++;
+            var cstr = numHan2Zen(i);
+            ftext += label({ chapter: i, num: cstr, text: chap });
+            ftext += '<div class="accshow">';
+            if (opt['section'])
+                ftext += String.raw(__makeTemplateObject(["<a href=\"", "&section=", "\">", "</a> <br>"], ["<a href=\"", "&section=", "\">", "</a> <br>"]), opt['self'], k, chap);
+            else
+                ftext += String.raw(__makeTemplateObject(["<a href=\"#c", "\">", "</a> <br>"], ["<a href=\"#c", "\">", "</a> <br>"]), i, chap);
+            var sec = this.getSections(i);
+            var j = 1;
+            for (var ses in sec) {
+                ses = sec[ses];
+                k++;
+                if (opt['section'])
+                    ftext += String.raw(__makeTemplateObject(["<a href=\"", "&section=", "\">", "</a> <br>"], ["<a href=\"", "&section=", "\">", "</a> <br>"]), opt['self'], k, ses);
+                else
+                    ftext += String.raw(__makeTemplateObject(["<a href=\"#", "_", "\">", "</a> <br>"], ["<a href=\"#", "_", "\">", "</a> <br>"]), i, j, ses);
+                j++;
+            }
+            i++;
+            ftext += '</div>';
+        }
+        return ftext;
     };
     return NovelFormatConverter;
 }());
@@ -159,9 +194,9 @@ function template(strings) {
     });
 }
 //HTMLに成形
-function createHTMLPage(text, opt) {
+function createHTMLPage(obj, opt) {
     var style;
-    var ftext = '';
+    var text;
     if ('style' in opt) {
         style = opt['style'][0];
     }
@@ -173,55 +208,33 @@ function createHTMLPage(text, opt) {
     var prefooter = '</div></div>';
     var footer = template(__makeTemplateObject(["<div id=\"footer\" class=\"footer\"><div class=\"accbox\">", "</div></div>"], ["<div id=\"footer\" class=\"footer\"><div class=\"accbox\">", "</div></div>"]), "footer");
     var postfotter = '</body></html>';
-    var label = template(__makeTemplateObject(["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"], ["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"]), "chapter", "num", "text", "chapter");
     if (!opt['js_path'])
         opt['js_path'] = './';
     if (!opt['css_path'])
         opt['css_path'] = './';
     if (!opt['mode'])
         opt['mode'] = 'cgi';
-    var lines = text.split(/\n/g);
-    var conv = new NovelFormatConverter();
-    if (opt['section']) {
-        text = conv.convertSection(lines, Number(opt['section'][0]));
+    var conv;
+    if (typeof obj === 'string') {
+        var text_1 = obj;
+        var lines = text_1.split(/\n/g);
+        conv = new NovelFormatConverter(lines);
     }
     else {
-        text = conv.convertAll(lines);
+        conv = obj;
     }
+    if (opt['section']) {
+        text = conv.convertSection(Number(opt['section'][0]));
+    }
+    else {
+        text = conv.convertAll();
+    }
+    var ftext = conv.createIndex(opt);
     if (style == 'bone') {
         var h_1 = header({ title: conv.title, css_path: opt['css_path'], js_path: opt['js_path'], mode: opt['mode'] });
         var f_1 = footer({ footer: ftext });
         var html_1 = h_1 + prefooter + f_1 + postfotter;
         return html_1;
-    }
-    //章リスト
-    var chapters = conv.getChapters();
-    var i = 1;
-    var k = 0;
-    //目次作成
-    for (var chap in chapters) {
-        chap = chapters[chap];
-        k++;
-        var cstr = numHan2Zen(i);
-        ftext += label({ chapter: i, num: cstr, text: chap });
-        ftext += '<div class="accshow">';
-        if (opt['section'])
-            ftext += String.raw(__makeTemplateObject(["<a href=\"", "&section=", "\">", "</a> <br>"], ["<a href=\"", "&section=", "\">", "</a> <br>"]), opt['self'], k, chap);
-        else
-            ftext += String.raw(__makeTemplateObject(["<a href=\"#c", "\">", "</a> <br>"], ["<a href=\"#c", "\">", "</a> <br>"]), i, chap);
-        var sec = conv.getSections(i);
-        var j = 1;
-        for (var ses in sec) {
-            ses = sec[ses];
-            k++;
-            if (opt['section'])
-                ftext += String.raw(__makeTemplateObject(["<a href=\"", "&section=", "\">", "</a> <br>"], ["<a href=\"", "&section=", "\">", "</a> <br>"]), opt['self'], k, ses);
-            else
-                ftext += String.raw(__makeTemplateObject(["<a href=\"#", "_", "\">", "</a> <br>"], ["<a href=\"#", "_", "\">", "</a> <br>"]), i, j, ses);
-            j++;
-        }
-        i++;
-        ftext += '</div>';
     }
     var h = header({ title: conv.title, css_path: opt['css_path'], js_path: opt['js_path'], mode: opt['mode'] });
     var f = footer({ footer: ftext });
@@ -235,7 +248,7 @@ function createHTMLPage(text, opt) {
             if (n > 0)
                 html += String.raw(__makeTemplateObject(["<p><a href=\"", "&section=", "\">\uFF3B\u524D\u3078\uFF3D</a></p>"], ["<p><a href=\"", "&section=", "\">\uFF3B\u524D\u3078\uFF3D</a></p>"]), opt['self'], n - 1);
             html += text;
-            if (k > n)
+            if (conv.innersection > n)
                 html += String.raw(__makeTemplateObject(["<p><a href=\"", "&section=", "\">\uFF3B\u6B21\u3078\uFF3D</a></p><p></p>"], ["<p><a href=\"", "&section=", "\">\uFF3B\u6B21\u3078\uFF3D</a></p><p></p>"]), opt['self'], n + 1);
         }
         else
@@ -261,10 +274,10 @@ function fromFile(filename) {
             text = '　　　　　　　　　　　　　　　　　ファイルが見つかりません　　　　　　　　　　　　　　　　';
         }
     }
-    return text;
+    var lines = text.split(/\n/g);
+    var conv = new NovelFormatConverter(lines);
+    return conv;
 }
-//debug
-var opt = { css_path: './assets/css', js_path: './assets/js' };
-var text = fromFile('/Users/takeshisaito/Dropbox/創作/中世ファンタジーのリアライズ問題.nvl');
-var html = createHTMLPage(text, opt);
-console.log(html);
+exports.NovelFormatConverter = NovelFormatConverter;
+exports.fromFile = fromFile;
+exports.createHTMLPage = createHTMLPage;

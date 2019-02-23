@@ -44,6 +44,11 @@ window.onload = function loadBody(){
         <input type="button" id="browse" class="browsebutton button" onClick="pywebview.api.open_file_dialog()" value="&#x1f4c1;">';
     }
 
+    if (apimode == 'electron') {
+        menuelm.innerHTML +='\
+        <input type="button" id="reload" class="reloadbutton button" onClick="reload()" value="&#x1f504;"> \
+        <input type="button" id="browse" class="browsebutton button" onClick="open_file_dialog()" value="&#x1f4c1;">';
+    }
 
     const fontelm = document.createElement("div");
     fontelm.id = 'fontmenu';
