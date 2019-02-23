@@ -1,0 +1,90 @@
+body {
+    -webkit-writing-mode: vertical-rl;
+    -ms-writing-mode: tb-rl;
+    writing-mode: vertical-rl;
+    right: 0;
+}
+
+div.header{
+    position: fixed;
+    right: 0;
+    height: 8rem;
+    left: 100%;
+}
+
+.switchbutton {
+    right: 0.5rem;
+    top:  0rem;
+}
+
+.browsebutton{
+    right: 0.5rem;
+    top: 2.7rem;
+}
+
+.reloadbutton{
+    right: 0.5rem;
+    top: 5.4rem;
+}
+
+.menubutton{
+    right: 0.5rem;
+    bottom: 2rem;
+    width: 2.5rem;
+}
+
+.fontbutton{
+    right: 0.5rem;
+    bottom: 5rem;
+
+}
+
+.selector {
+    right: 4rem;
+    bottom: 5rem;
+}
+
+h1.title {
+    top: 20%;
+    right: 0;
+    height: 60%;
+    width: 4rem;
+    font-size: 150%;
+    display: grid;
+    position: fixed;
+    vertical-align: top;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+div.body {    
+    width: 80vw;
+    height: 100vh - 6rem;
+    right: 6rem;
+    position: absolute;
+    overflow-y: hidden;
+    overflow-x: auto;
+    line-height: 200%;
+    padding-right: 3rem;
+    padding-left: 3rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+div.body div.novel{
+    right: 0;
+}
+
+div.footer {
+    display: none;
+    height: 12.5rem;
+    width: 90%;
+    bottom: 40px;
+    right: 5rem;
+    position: fixed;
+    overflow-y: hidden;
+    overflow-x: auto;
+    opacity: 0.8;
+}
+

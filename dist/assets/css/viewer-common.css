@@ -1,0 +1,196 @@
+@charset "UTF-8";
+
+body {
+    background-color: cornsilk;
+    font-family: serif;
+    display: grid;
+    -webkit-text-size-adjust: 100%;
+    z-index: 1;
+}
+
+.header{
+    z-index: 2;
+}
+
+.footer{
+    z-index: 3;
+}
+
+/* epub周り
+   style-standard.cssがそのままつかえる様に加工する
+*/
+.em-dot{
+    text-emphasis-style: dot;
+}
+
+.tcy{
+    -webkit-text-combine:         horizontal;
+    -webkit-text-combine-upright: all;
+    text-combine-upright: all;
+}
+
+
+/* 表示スタイル周り */
+
+body[colorset="dark"]{
+    background-color: #333333;
+    color: #cccccc;
+    -webkit-text-size-adjust: 100%;
+}
+
+body[colorset="light"]{
+    background-color: white;
+    color: black;
+    -webkit-text-size-adjust: 100%;
+}
+
+body[fontset="serif"]{        
+    font-family: 游明朝,"Yu Mincho",YuMincho,"Hiragino Mincho ProN",HGS明朝E,メイリオ,Meiryo,serif;;
+}
+
+body[fontset="sansserif"]{
+    font-family: sans-serif; 
+}
+
+body[fontsize="XL"]{
+    font-size: 300%;
+}
+body[fontsize="LL"]{
+    font-size: 200%;
+}
+
+body[fontsize="L"]{
+    font-size: 150%;
+}
+body[fontsize="M"]{
+    font-size: 100%;
+}
+body[fontsize="S"]{
+    font-size: 80%;
+}
+
+div.body a,div.body a.visited{
+    text-decoration: none;
+    color: red;
+}
+
+div.body a:active,div.body a:hover {
+    color: black;
+    background-color: aqua;
+}
+
+div.list {
+    padding-bottom: 10%;
+}
+
+div.list a:active,div.body a:hover {
+    color: black;
+    background-color: aqua;
+}
+
+.selector{
+    writing-mode:horizontal-tb;
+    width: 6rem;
+    height: 4rem
+}
+
+/* メニュー周り */
+select{
+/*
+    -webkit-appearance:button;
+    -moz-appearance:button;
+    appearance:button;
+*/
+    width: 6rem;
+    border-color: grey;
+    border-bottom-color: grey;
+    background-color: white;
+}
+
+/* 目次周り */
+
+.button {
+    border-color: black;
+    border-bottom-color: #cccccc;
+    background-color: cornsilk;
+    margin: 0.5rem;
+    height: 2.5rem;
+    width: 2.5rem
+}
+
+.switchbutton, .fontbutton, .menubutton, .reloadbutton, .browsebutton, .selector{
+    position: fixed;
+    padding: 0;
+}
+
+.reloadbutton, .browsebutton {
+    font-size: 120%;
+}
+
+div.footer a ,div.footer a:visited{
+    text-decoration: none;
+    color: black;
+}
+
+div.footer a:active,div.footer a:hover {
+    color: blue;
+    background-color: aqua;
+}
+
+div.list a ,div.footer a:visited{
+    text-decoration: none;
+    color: black;
+}
+
+div.list a:active,div.footer a:hover {
+    color: blue;
+    background-color: aqua;
+}
+
+p {
+    padding: 1px;
+}
+
+.accbox {
+    margin: 0 0;
+    padding: 0;
+    max-width: 10rem;/*最大幅*/
+    max-height: 25rem;
+}
+
+/*ラベル*/
+.accbox label {
+    display: block;
+    color :#ffeeff;
+    font-weight: bold;
+    background : skyblue;
+    cursor :pointer;
+}
+
+/*ラベルホバー時*/
+.accbox label:hover {
+    background :#5cbeff;
+}
+
+/*チェックは隠す*/
+.accbox input {
+    display: none;
+}
+
+/*中身を非表示にしておく*/
+.accbox .accshow {
+    height: 0;
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+/*クリックで中身表示*/
+.cssacc:checked + .accshow {
+    height: auto;
+    width: auto;
+    padding: 5px;
+    background: #eaeaea;
+    opacity: 1;
+}
