@@ -1,7 +1,7 @@
 {
   "name": "novelreader",
   "version": "0.0.1",
-  "description": "",
+  "description": "Novel Viewer",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,6 +13,7 @@
     "electron": "^4.0.5"
   },
   "dependencies": {
-    "command-line-args": "^5.0.2"
+    "command-line-args": "^5.0.2",
+    "electron-packager": "^13.1.0"
   }
 }

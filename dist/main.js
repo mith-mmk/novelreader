@@ -21,9 +21,9 @@ let filename = '';
 
 // 全てのウィンドウが閉じたら終了
 app.on("window-all-closed", () => {
-//  if (process.platform != "darwin") {
+  if (process.platform != "darwin") {
     app.quit();
-//  }
+  }
 });
 
 let opt = {css_path: './assets/css',js_path: './assets/js',mode: "electron"};
@@ -72,19 +72,20 @@ app.on("ready", () => {
   });
 
   function loadFile(event) {
-    try {
-      conv = novelconv.fromFile(filename);
-      opt['style'] = ['noheader'];
-      text = novelconv.createHTMLPage(conv,opt);
-      event.sender.send('body', text);
-      opt['style'] = ['index'];
-      text = novelconv.createHTMLPage(conv,opt);
-      event.sender.send('index', text);
-    } catch (e){
-      console.log(e);
-    }
+    let text = '';
+    const fs = require('fs');
+    text = fs.readFile(filename, {encoding: "utf-8"},function (e,text) {
+        if(e) throw err;
+        const lines = text.split(/\n/g);
+        const conv  = new novelconv.NovelFormatConverter(lines); 
+        opt['style'] = ['noheader'];
+        text = novelconv.createHTMLPage(conv,opt);
+        event.sender.send('body', text);
+        opt['style'] = ['index'];
+        text = novelconv.createHTMLPage(conv,opt);
+        event.sender.send('index', text);
+    });
   }
-
 });
 
 

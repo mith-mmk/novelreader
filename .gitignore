@@ -3,3 +3,5 @@ package-lock.json
 electron
 test/
 .vscode/
+novelreader-darwin-x64/
+out/*
