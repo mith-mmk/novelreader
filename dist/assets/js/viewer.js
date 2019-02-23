@@ -29,7 +29,7 @@ window.onload = function loadBody(){
     apimode = document.body.getAttribute("mode");
 
     const headerelm = document.getElementById("header");
-
+    
     const menuelm = document.createElement("div");
     menuelm.id = 'menu';
     menuelm.className = 'menu';
@@ -45,9 +45,51 @@ window.onload = function loadBody(){
     }
 
     if (apimode == 'electron') {
-        menuelm.innerHTML +='\
-        <input type="button" id="reload" class="reloadbutton button" onClick="reload()" value="&#x1f504;"> \
-        <input type="button" id="browse" class="browsebutton button" onClick="open_file_dialog()" value="&#x1f4c1;">';
+        reloadelm = document.createElement("button");
+        reloadelm.id = "reload";
+        reloadelm.innerHTML ="&#x1f504;";
+        reloadelm.classList.add("reloadbutton");
+        reloadelm.classList.add("button");
+
+        dialogelm = document.createElement("button");
+        dialogelm.id = "dialog";
+        dialogelm.innerHTML = "&#x1f4c1;";
+        dialogelm.classList.add("browsebutton");
+        dialogelm.classList.add("button");
+        
+        menuelm.appendChild(reloadelm);
+        menuelm.appendChild(dialogelm);
+        const { ipcRenderer } = require('electron');
+        ipcRenderer.on('body', (event, arg) => {
+            console.log("body");
+            const elm = document.getElementById("novel");
+            elm.innerHTML = arg;
+        });
+        ipcRenderer.on('index', (event, arg) => {
+            console.log("index");
+            const elm = document.getElementById("footer");
+            elm.innerHTML = arg;
+        });
+
+        reloadelm.addEventListener("click",function(){
+            const { ipcRenderer } = require('electron');
+            ipcRenderer.send('reload', true);
+        });
+        
+        dialogelm.addEventListener("click",function (){
+            const dialog = require('electron').remote.dialog;
+            let filenames = dialog.showOpenDialog({
+            properties: ['openFile'],
+            title: '小説ファイルを選択してください',
+            filters: [
+                {'text':'txt'},
+                {'All':'*'}
+            ]
+            });
+            if(filenames.length >= 1)
+                ipcRenderer.send('fileload', filenames[0]);
+        });
+
     }
 
     const fontelm = document.createElement("div");
@@ -83,8 +125,6 @@ window.onload = function loadBody(){
         },100);  //Workallound for Webview
     }
 }
-
-
 
 function setScroll(response) {
     if (_mode != 1){

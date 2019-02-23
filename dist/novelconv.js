@@ -21,6 +21,8 @@ var NovelFormatConverter = /** @class */ (function () {
         this.inntertext = []; // 分割用
         this.section_change = true;
         this.path = './';
+        this.converted = false;
+        this.convertedText = '';
     }
     NovelFormatConverter.prototype.setPath = function (path) {
         this.path = path;
@@ -87,16 +89,18 @@ var NovelFormatConverter = /** @class */ (function () {
         //   普通の文章
         var formated;
         //   ルビ
-        formated = text.replace(/｜(.+?)《(.+?)》/, '<ruby class="ruby">$1<rt>$2</rt></ruby>');
+        formated = text.replace(/｜(.+?)《(.+?)》/g, '<ruby class="ruby">$1<rt>$2</rt></ruby>');
         //   傍点
-        formated = formated.replace(/《{2}(.+?)》{2}/, '<span class="em-dot">$1</span>');
+        formated = formated.replace(/《{2}(.+?)》{2}/g, '<span class="em-dot">$1</span>');
         //   縦横中
-        formated = formated.replace(/\[(.+?)\]/, '<span class="tcy">$1</span>');
+        formated = formated.replace(/\[(.+?)\]/g, '<span class="tcy">$1</span>');
         this.line++;
         var htmltext = String.raw(__makeTemplateObject(["<p id=P", "_", "_ ", ">", "</p>"], ["<p id=P", "_", "_ ", ">", "</p>"]), this.chapter, this.section, this.line, formated);
         return htmltext;
     };
     NovelFormatConverter.prototype.convertAll = function () {
+        if (this.converted)
+            return this.convertedText;
         var text = String.raw(__makeTemplateObject(["<div id=\"_", "\">"], ["<div id=\"_", "\">"]), this.innersection);
         this.section_change = false;
         for (var row in this.lines) {
@@ -108,6 +112,8 @@ var NovelFormatConverter = /** @class */ (function () {
             text += s;
         }
         text += '</div>';
+        this.converted = true;
+        this.convertedText;
         return text;
     };
     ;
@@ -126,10 +132,14 @@ var NovelFormatConverter = /** @class */ (function () {
             }
             text += s;
         }
+        this.converted = false;
         return ret_text;
     };
+    NovelFormatConverter.prototype.getConverted = function () {
+        return this.converted;
+    };
     NovelFormatConverter.prototype.createIndex = function (opt) {
-        var label = template(__makeTemplateObject(["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"], ["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"]), "chapter", "num", "text", "chapter");
+        var label = NovelFormatConverter.template(__makeTemplateObject(["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"], ["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"]), "chapter", "num", "text", "chapter");
         var ftext;
         ftext = '';
         //章リスト
@@ -140,7 +150,7 @@ var NovelFormatConverter = /** @class */ (function () {
         for (var chap in chapters) {
             chap = chapters[chap];
             k++;
-            var cstr = numHan2Zen(i);
+            var cstr = NovelFormatConverter.numHan2Zen(i);
             ftext += label({ chapter: i, num: cstr, text: chap });
             ftext += '<div class="accshow">';
             if (opt['section'])
@@ -163,36 +173,36 @@ var NovelFormatConverter = /** @class */ (function () {
         }
         return ftext;
     };
+    NovelFormatConverter.numHan2Zen = function (num) {
+        var zenhan = ['０', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+        num = String(num);
+        var str = '';
+        for (var i = 0; i < num.length; i++) {
+            str += zenhan[Number(num.charAt(i))];
+        }
+        return str;
+    };
+    NovelFormatConverter.template = function (strings) {
+        var keys = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            keys[_i - 1] = arguments[_i];
+        }
+        return (function () {
+            var values = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                values[_i] = arguments[_i];
+            }
+            var dict = values[values.length - 1] || {};
+            var result = [strings[0]];
+            keys.forEach(function (key, i) {
+                var value = Number.isInteger(key) ? values[key] : dict[key];
+                result.push(value, strings[i + 1]);
+            });
+            return result.join('');
+        });
+    };
     return NovelFormatConverter;
 }());
-function numHan2Zen(num) {
-    var zenhan = ['０', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
-    num = String(num);
-    var str = '';
-    for (var i = 0; i < num.length; i++) {
-        str += zenhan[Number(num.charAt(i))];
-    }
-    return str;
-}
-function template(strings) {
-    var keys = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        keys[_i - 1] = arguments[_i];
-    }
-    return (function () {
-        var values = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            values[_i] = arguments[_i];
-        }
-        var dict = values[values.length - 1] || {};
-        var result = [strings[0]];
-        keys.forEach(function (key, i) {
-            var value = Number.isInteger(key) ? values[key] : dict[key];
-            result.push(value, strings[i + 1]);
-        });
-        return result.join('');
-    });
-}
 //HTMLに成形
 function createHTMLPage(obj, opt) {
     var style;
@@ -203,11 +213,12 @@ function createHTMLPage(obj, opt) {
     else {
         style = 'full';
     }
-    var header = template(__makeTemplateObject(["<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n    <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"ja\" lang=\"ja\"><head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">\n    <meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\">\n    <script type=\"text/javascript\" src=\"", "/viewer.js\">\n    </script>\n    <title>", "</title>\n    <link rel=\"stylesheet\" href=\"", "/viewer-common.css\" type=\"text/css\" id=\"common-css\">\n    <link rel=\"stylesheet\" href=\"", "/viewer.css\" type=\"text/css\" id=\"viewer-css\">\n    </head>\n    <body colorset=\"default\" fontset=\"default\" fontsize=\"default\" css_path=\"", "\" js_path=\"", "\" mode=\"", "\">\n    <div class =\"header\" id=\"header\"></div>\n    <div id=\"body\" class=\"body\"><div class=\"novel\" id=\"novel\"> "], ["<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n    <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"ja\" lang=\"ja\"><head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">\n    <meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\">\n    <script type=\"text/javascript\" src=\"", "/viewer.js\">\n    </script>\n    <title>", "</title>\n    <link rel=\"stylesheet\" href=\"", "/viewer-common.css\" type=\"text/css\" id=\"common-css\">\n    <link rel=\"stylesheet\" href=\"", "/viewer.css\" type=\"text/css\" id=\"viewer-css\">\n    </head>\n    <body colorset=\"default\" fontset=\"default\" fontsize=\"default\" css_path=\"", "\" js_path=\"", "\" mode=\"", "\">\n    <div class =\"header\" id=\"header\"></div>\n    <div id=\"body\" class=\"body\"><div class=\"novel\" id=\"novel\"> "]), "js_path", "title", "css_path", "css_path", "css_path", "js_path", "mode");
-    var titlehtml = template(__makeTemplateObject(["<h1 class=\"title\" id=\"title\">", "</h1>"], ["<h1 class=\"title\" id=\"title\">", "</h1>"]), "title");
-    var prefooter = '</div></div>';
-    var footer = template(__makeTemplateObject(["<div id=\"footer\" class=\"footer\"><div class=\"accbox\">", "</div></div>"], ["<div id=\"footer\" class=\"footer\"><div class=\"accbox\">", "</div></div>"]), "footer");
-    var postfotter = '</body></html>';
+    var header = NovelFormatConverter.template(__makeTemplateObject(["<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n    <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"ja\" lang=\"ja\"><head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">\n    <meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\">\n    <script type=\"text/javascript\" src=\"", "/viewer.js\">\n    </script>\n    <title>", "</title>\n    <link rel=\"stylesheet\" href=\"", "/viewer-common.css\" type=\"text/css\" id=\"common-css\">\n    <link rel=\"stylesheet\" href=\"", "/viewer.css\" type=\"text/css\" id=\"viewer-css\">\n    </head>\n    <body colorset=\"default\" fontset=\"default\" fontsize=\"default\" css_path=\"", "\" js_path=\"", "\" mode=\"", "\">\n    <div class =\"header\" id=\"header\"></div>\n    <div id=\"body\" class=\"body\"><div class=\"novel\" id=\"novel\"> "], ["<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n    <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"ja\" lang=\"ja\"><head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">\n    <meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\">\n    <script type=\"text/javascript\" src=\"", "/viewer.js\">\n    </script>\n    <title>", "</title>\n    <link rel=\"stylesheet\" href=\"", "/viewer-common.css\" type=\"text/css\" id=\"common-css\">\n    <link rel=\"stylesheet\" href=\"", "/viewer.css\" type=\"text/css\" id=\"viewer-css\">\n    </head>\n    <body colorset=\"default\" fontset=\"default\" fontsize=\"default\" css_path=\"", "\" js_path=\"", "\" mode=\"", "\">\n    <div class =\"header\" id=\"header\"></div>\n    <div id=\"body\" class=\"body\"><div class=\"novel\" id=\"novel\"> "]), "js_path", "title", "css_path", "css_path", "css_path", "js_path", "mode");
+    var titlehtml = NovelFormatConverter.template(__makeTemplateObject(["<h1 class=\"title\" id=\"title\">", "</h1>"], ["<h1 class=\"title\" id=\"title\">", "</h1>"]), "title");
+    var prefooter = '</div></div><div id="footer" class="footer">';
+    var footer = NovelFormatConverter.template(__makeTemplateObject(["<div class=\"accbox\">", "</div>"], ["<div class=\"accbox\">", "</div>"]), "footer");
+    var postfotter = '</div></body></html>';
+    var label = NovelFormatConverter.template(__makeTemplateObject(["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"], ["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"]), "chapter", "num", "text", "chapter");
     if (!opt['js_path'])
         opt['js_path'] = './';
     if (!opt['css_path'])
@@ -256,7 +267,7 @@ function createHTMLPage(obj, opt) {
     }
     if (style != 'noheader')
         if (style == 'index')
-            html += f;
+            html = f;
         else
             html += prefooter + f + postfotter;
     return html;

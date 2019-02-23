@@ -14,6 +14,8 @@ class NovelFormatConverter{
     inntertext: string[];
     section_change: boolean;
     path: string;
+    converted: boolean;
+    convertedText: string;
 
     constructor(lines :string[]){
         this.lines = lines;
@@ -32,6 +34,8 @@ class NovelFormatConverter{
         this.inntertext = [];    // 分割用
         this.section_change = true;
         this.path = './';
+        this.converted = false;
+        this.convertedText = '';
     }
      
     setPath(path: string):void{
@@ -107,11 +111,11 @@ class NovelFormatConverter{
 //   普通の文章
         let formated: string;
 //   ルビ
-        formated = text.replace(/｜(.+?)《(.+?)》/,'<ruby class="ruby">$1<rt>$2</rt></ruby>');
+        formated = text.replace(/｜(.+?)《(.+?)》/g,'<ruby class="ruby">$1<rt>$2</rt></ruby>');
 //   傍点
-        formated = formated.replace(/《{2}(.+?)》{2}/,'<span class="em-dot">$1</span>');
+        formated = formated.replace(/《{2}(.+?)》{2}/g,'<span class="em-dot">$1</span>');
 //   縦横中
-        formated = formated.replace(/\[(.+?)\]/,'<span class="tcy">$1</span>');
+        formated = formated.replace(/\[(.+?)\]/g,'<span class="tcy">$1</span>');
              
         this.line ++;
         let htmltext = String.raw`<p id=P${this.chapter}_${this.section}_ ${this.line}>${formated}</p>`;
@@ -119,6 +123,8 @@ class NovelFormatConverter{
     }
 
     convertAll(): string {
+        if(this.converted)
+             return this.convertedText; 
         let text = String.raw`<div id="_${this.innersection}">`;
         this.section_change =false;
         for (let row in this.lines) {
@@ -130,13 +136,15 @@ class NovelFormatConverter{
             text += s;
         }
         text += '</div>';
+        this.converted = true;
+        this.convertedText;
         return text;
     };
 
     convertSection(num: number): string {
         this.section_change =false;
         let text = '';
-        let ret_text = '';
+        let ret_text = '';        
         for (let row in this.lines){
             let s = this.convert(this.lines[row]);
             if(this.section_change){
@@ -148,12 +156,16 @@ class NovelFormatConverter{
             }
             text += s;
         }
+        this.converted = false;
         return ret_text;
     }
 
+    getConverted():boolean {
+        return this.converted;
+    }
 
     createIndex(opt :any) :string {
-        const label = template`<label for="label${"chapter"}">${"num"} ${"text"}</label><input type="radio" name="menu" id="label${"chapter"}" class="cssacc" />`
+        const label = NovelFormatConverter.template`<label for="label${"chapter"}">${"num"} ${"text"}</label><input type="radio" name="menu" id="label${"chapter"}" class="cssacc" />`
         let ftext :string;
         ftext = '';
          //章リスト
@@ -165,7 +177,7 @@ class NovelFormatConverter{
             chap = chapters[chap];
 
             k ++;
-            const cstr = numHan2Zen(i);
+            const cstr = NovelFormatConverter.numHan2Zen(i);
             ftext += label({chapter: i,num: cstr,text: chap});
             ftext += '<div class="accshow">'
             if ( opt['section'])
@@ -186,32 +198,32 @@ class NovelFormatConverter{
             i ++;
             ftext += '</div>';
         }
-
         return ftext;
     }
-}
 
-function numHan2Zen(num: string | number) :string{
-    const zenhan = ['０','一','二','三','四','五','六','七','八','九'];
-    num = String(num);
-    let str = '';
-    for (let i = 0 ; i < num.length ; i++ ){
-        str += zenhan [Number(num.charAt(i))];
+    static numHan2Zen(num: string | number) :string{
+        const zenhan = ['０','一','二','三','四','五','六','七','八','九'];
+        num = String(num);
+        let str = '';
+        for (let i = 0 ; i < num.length ; i++ ){
+            str += zenhan [Number(num.charAt(i))];
+        }
+        return str;
     }
-    return str;
+
+    static template(strings :any, ...keys :any) {
+        return (function(...values: {}[]) :string {
+          var dict :any = values[values.length - 1] || {};
+          var result = [strings[0]];
+          keys.forEach(function(key :any, i:number) {
+            var value = Number.isInteger(key) ? values[key] : dict[key];
+            result.push(value, strings[i + 1]);
+          });
+          return result.join('');
+        });
+    }
 }
 
-function template(strings :any, ...keys :any) {
-    return (function(...values: {}[]) :string {
-      var dict :any = values[values.length - 1] || {};
-      var result = [strings[0]];
-      keys.forEach(function(key :any, i:number) {
-        var value = Number.isInteger(key) ? values[key] : dict[key];
-        result.push(value, strings[i + 1]);
-      });
-      return result.join('');
-    });
-}
 
 //HTMLに成形
 
@@ -223,7 +235,8 @@ function createHTMLPage(obj: string | NovelFormatConverter,opt: { [x: string]: a
     }else{
         style = 'full';
     }
-    const header = template`<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+
+    const header = NovelFormatConverter.template`<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja"><head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
@@ -237,10 +250,14 @@ function createHTMLPage(obj: string | NovelFormatConverter,opt: { [x: string]: a
     <body colorset="default" fontset="default" fontsize="default" css_path="${"css_path"}" js_path="${"js_path"}" mode="${"mode"}">
     <div class ="header" id="header"></div>
     <div id="body" class="body"><div class="novel" id="novel"> `;
-    const titlehtml = template`<h1 class="title" id="title">${"title"}</h1>`;
-    const prefooter = '</div></div>';
-    const footer =  template`<div id="footer" class="footer"><div class="accbox">${"footer"}</div></div>`;
-    const postfotter = '</body></html>';
+    const titlehtml = NovelFormatConverter.template`<h1 class="title" id="title">${"title"}</h1>`;
+    const prefooter = '</div></div><div id="footer" class="footer">';
+    const footer =  NovelFormatConverter.template`<div class="accbox">${"footer"}</div>`;
+    const postfotter = '</div></body></html>';
+
+    const label = NovelFormatConverter.template`<label for="label${"chapter"}">${"num"} ${"text"}</label><input type="radio" name="menu" id="label${"chapter"}" class="cssacc" />`
+
+
 
     if  (!opt['js_path'])  opt['js_path'] = './';
     if  (!opt['css_path'])  opt['css_path'] = './';
@@ -289,7 +306,7 @@ function createHTMLPage(obj: string | NovelFormatConverter,opt: { [x: string]: a
     }
     if ( style != 'noheader')
         if ( style == 'index')
-            html += f;
+            html = f;
         else
             html += prefooter + f + postfotter;
     return html;

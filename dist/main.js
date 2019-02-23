@@ -13,6 +13,7 @@ const app = electron.app;
 
 // ウィンドウを作成するモジュール
 const BrowserWindow = electron.BrowserWindow;
+const dialog = electron.dialog;
 
 // メインウィンドウはGCされないようにグローバル宣言
 let mainWindow = null;
@@ -25,12 +26,11 @@ app.on("window-all-closed", () => {
 //  }
 });
 
-let opt = {css_path: './assets/css',js_path: './assets/js'};
-
+let opt = {css_path: './assets/css',js_path: './assets/js',mode: "electron"};
 
 // Electronの初期化完了後に実行
 app.on("ready", () => {
-
+  const { ipcMain } = require('electron');
  // 初期ウィンドウを800 * 600 に設定
   mainWindow = new BrowserWindow({width: 800, height: 600, useContentSize: true});
   //使用するhtmlファイルを指定する
@@ -39,31 +39,51 @@ app.on("ready", () => {
 // ファイルが指定してなければファイルをロード
   mainWindow.on("show", () => {
     if(filename == undefined) {
-      filename = opendialog(mainWindow);
-    } else {
-      conv = novelconv.fromFile(filename);
-      text = novelconv.createHTMLPage(conv,opt);
-      console.log(text);
+      let filenames = dialog.showOpenDialog({
+        properties: ['openFile'],
+        title: '小説ファイルを選択してください',
+        filters: [
+          {'text':'txt'},
+          {'All':'*'}]
+      });
+      filename = filenames[0];
     }
   });
   // ウィンドウが閉じられたらアプリも終了
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
+
+  ipcMain.on('fileload', (event, arg) => {
+    console.log(arg);
+    console.log("load " + arg);
+    filename = arg;
+    loadFile(event);
+  });
+
+  ipcMain.on('reload', (event, arg) => {
+    console.log("reload");
+    loadFile(event);
+  });
+
+  function loadFile(event) {
+    try {
+      conv = novelconv.fromFile(filename);
+      opt['style'] = ['noheader'];
+      opt['style'] = ['noheader'];
+      text = novelconv.createHTMLPage(conv,opt);
+      event.sender.send('body', text);
+      opt['style'] = ['index'];
+      text = novelconv.createHTMLPage(conv,opt);
+      event.sender.send('index', text);
+    } catch (e){
+      console.log(e);
+    }
+  }
+
 });
 
 
- function opendialog(window){
-    const dialog = electron.remote.dialog;
-    let filenames = dialog.showOpenDoalog(window,{
-    properties: ['open'],
-    title: '小説ファイルを選択してください',
-    filters: [
-      {name: 'テキストファイル',extensions:['txt']},
-      {name: '全てのファイル',extensions:['*']}
-    ]});
-    return filenames[0];
-  }
 
   const optionDefinitions = [
     {
