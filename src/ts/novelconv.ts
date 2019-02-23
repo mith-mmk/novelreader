@@ -1,31 +1,32 @@
 'use strict';
-
+// version 0.0.1
 class NovelFormatConverter{
     chapter: number;
     section: number;
     chapter_text: string;
-    secion_text: string;
+    section_text: string;
     line: number;
     textline: number;
     title: string;
-    sections: {};
-    chapters: {};
+    sections: {[key: number]: string}[];;
+    chapters: string[];
     innersection: number;
     inntertext: string[];
     section_change: boolean;
     path: string;
-    section_text: string;
+
     constructor(){
         this.chapter = 0;
         this.section = 1;
         this.chapter_text = '';
-        this.secion_text = '';
+        this.section_text = '';
+
         this.line = 0;
         this.textline = 0;
         this.title = 'NOVEL';
-        this.sections = {};
+        this.sections = [] ;
         this.sections[this.chapter] = {};
-        this.chapters = {};
+        this.chapters = [];
         this.innersection = 0;   // 分割用
         this.inntertext = [];    // 分割用
         this.section_change = true;
@@ -37,14 +38,14 @@ class NovelFormatConverter{
     }
 
     getChapters() :string[]{
-        let c = [];
+        let c :string[] = [];
         for (let chap in this.chapters)
             c.push(this.chapters[chap]);
         return c;
     }
      
     getSections(num: number):string[]{
-        let s = [];
+        let s :string[]= [];
         for (let sec in this.sections[num])
             s.push(this.sections[num][sec]); 
         return s;
@@ -84,7 +85,7 @@ class NovelFormatConverter{
         if(text.match('##')){
             this.section_text = text.replace(/^##\s*/,'');
             this.sections[this.chapter][this.section] = this.section_text;
-            const formated = String.raw`<a name="${this.chapter}_${this.section}"></a><h3 class="s${this.chapter}_${this.section}">${this.secion_text}</h3>`;
+            const formated = String.raw`<a name="${this.chapter}_${this.section}"></a><h3 class="s${this.chapter}_${this.section}">${this.section_text}</h3>`;
             this.section += 1;
             this.innersection += 1;
             this.section_change = true;
@@ -160,11 +161,11 @@ function numHan2Zen(num: string | number) :string{
     return str;
 }
 
-function template(strings , ...keys ) {
+function template(strings :any, ...keys :any) {
     return (function(...values: {}[]) :string {
-      var dict = values[values.length - 1] || {};
+      var dict :any = values[values.length - 1] || {};
       var result = [strings[0]];
-      keys.forEach(function(key, i) {
+      keys.forEach(function(key :any, i:number) {
         var value = Number.isInteger(key) ? values[key] : dict[key];
         result.push(value, strings[i + 1]);
       });

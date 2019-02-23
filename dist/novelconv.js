@@ -3,23 +3,25 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
 };
+// version 0.0.1
 var NovelFormatConverter = /** @class */ (function () {
     function NovelFormatConverter() {
         this.chapter = 0;
         this.section = 1;
         this.chapter_text = '';
-        this.secion_text = '';
+        this.section_text = '';
         this.line = 0;
         this.textline = 0;
         this.title = 'NOVEL';
-        this.sections = {};
+        this.sections = [];
         this.sections[this.chapter] = {};
-        this.chapters = {};
+        this.chapters = [];
         this.innersection = 0; // 分割用
         this.inntertext = []; // 分割用
         this.section_change = true;
         this.path = './';
     }
+    ;
     NovelFormatConverter.prototype.setPath = function (path) {
         this.path = path;
     };
@@ -65,7 +67,7 @@ var NovelFormatConverter = /** @class */ (function () {
         if (text.match('##')) {
             this.section_text = text.replace(/^##\s*/, '');
             this.sections[this.chapter][this.section] = this.section_text;
-            var formated_1 = String.raw(__makeTemplateObject(["<a name=\"", "_", "\"></a><h3 class=\"s", "_", "\">", "</h3>"], ["<a name=\"", "_", "\"></a><h3 class=\"s", "_", "\">", "</h3>"]), this.chapter, this.section, this.chapter, this.section, this.secion_text);
+            var formated_1 = String.raw(__makeTemplateObject(["<a name=\"", "_", "\"></a><h3 class=\"s", "_", "\">", "</h3>"], ["<a name=\"", "_", "\"></a><h3 class=\"s", "_", "\">", "</h3>"]), this.chapter, this.section, this.chapter, this.section, this.section_text);
             this.section += 1;
             this.innersection += 1;
             this.section_change = true;
