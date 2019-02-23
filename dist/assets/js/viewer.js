@@ -89,6 +89,7 @@ window.onload = function loadBody(){
             if(filenames.length >= 1)
                 ipcRenderer.send('fileload', filenames[0]);
         });
+        ipcRenderer.send('init', true);
 
     }
 

@@ -38,6 +38,14 @@ app.on("ready", () => {
 
 // ファイルが指定してなければファイルをロード
   mainWindow.on("show", () => {
+
+  });
+  // ウィンドウが閉じられたらアプリも終了
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
+
+  ipcMain.on('init', (event, arg) => {
     if(filename == undefined) {
       let filenames = dialog.showOpenDialog({
         properties: ['openFile'],
@@ -48,10 +56,7 @@ app.on("ready", () => {
       });
       filename = filenames[0];
     }
-  });
-  // ウィンドウが閉じられたらアプリも終了
-  mainWindow.on("closed", () => {
-    mainWindow = null;
+    loadFile(event);
   });
 
   ipcMain.on('fileload', (event, arg) => {
@@ -69,7 +74,6 @@ app.on("ready", () => {
   function loadFile(event) {
     try {
       conv = novelconv.fromFile(filename);
-      opt['style'] = ['noheader'];
       opt['style'] = ['noheader'];
       text = novelconv.createHTMLPage(conv,opt);
       event.sender.send('body', text);
