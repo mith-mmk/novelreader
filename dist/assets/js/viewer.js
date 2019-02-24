@@ -89,6 +89,21 @@ window.onload = function loadBody(){
             if(filenames.length >= 1)
                 ipcRenderer.send('fileload', filenames[0]);
         });
+
+        var holder = document;
+        holder.ondragover = function () {
+          return false;
+        };
+        holder.ondragleave = holder.ondragend = function () {
+          return false;
+        };
+        holder.ondrop = function (e) {
+          e.preventDefault();
+          var file = e.dataTransfer.files[0];
+          ipcRenderer.send('fileload', file.path);
+          return false;
+        };
+
         ipcRenderer.send('init', true);
 
     }

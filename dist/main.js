@@ -47,14 +47,18 @@ app.on("ready", () => {
 
   ipcMain.on('init', (event, arg) => {
     if(filename == undefined) {
-      let filenames = dialog.showOpenDialog({
-        properties: ['openFile'],
-        title: '小説ファイルを選択してください',
-        filters: [
-          {'text':'txt'},
-          {'All':'*'}]
-      });
-      filename = filenames[0];
+      try {
+        let filenames = dialog.showOpenDialog({
+          properties: ['openFile'],
+          title: '小説ファイルを選択してください',
+          filters: [
+            {'text':'txt'},
+           {'All':'*'}]
+        });
+        filename = filenames[0];
+      } catch {
+        return;
+      }
     }
     loadFile(event);
   });
@@ -72,9 +76,8 @@ app.on("ready", () => {
   });
 
   function loadFile(event) {
-    let text = '';
     const fs = require('fs');
-    text = fs.readFile(filename, {encoding: "utf-8"},function (e,text) {
+    fs.readFile(filename, {encoding: "utf-8"},function (e,text) {
         if(e) throw err;
         const lines = text.split(/\n/g);
         const conv  = new novelconv.NovelFormatConverter(lines); 
