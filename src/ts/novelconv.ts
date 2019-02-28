@@ -1,5 +1,6 @@
 'use strict';
-// version 0.0.1
+// version 0.1.0 novel conveet library
+// License MIT  (C) 2019 MITH@mmk
 class NovelFormatConverter{
     chapter: number;
     section: number;
@@ -65,16 +66,20 @@ class NovelFormatConverter{
         this.textline ++;
 //   <　> & の置換
      
+        const escape: { [key: string]: string; } = { "&" : "&amp;", "<": "&lt;",">": "&gt;",'"': "&quot;", "'": '&#39;' };
+        text = text.replace(/([&<>\"\'])/g,function(m){return escape[m]; });
+
+        /*
         text = text
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
-     
+        */
         if(text.match(/\[NOVEL\]/))
             return '';
-
+        
 //    @プラグマ TITLEのみ実装
         if( text.match('@.+$') ){
             const pragma = text.replace(/^\s*@(.+)\s*$/,"$1");

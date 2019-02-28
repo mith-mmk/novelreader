@@ -3,7 +3,8 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
 };
-// version 0.0.1
+// version 0.1.0 novel conveet library
+// License MIT  (C) 2019 MITH@mmk
 var NovelFormatConverter = /** @class */ (function () {
     function NovelFormatConverter(lines) {
         this.lines = lines;
@@ -46,12 +47,16 @@ var NovelFormatConverter = /** @class */ (function () {
             this.title = text;
         this.textline++;
         //   <　> & の置換
+        var escape = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": '&#39;' };
+        text = text.replace(/([&<>\"\'])/g, function (m) { return escape[m]; });
+        /*
         text = text
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
+        */
         if (text.match(/\[NOVEL\]/))
             return '';
         //    @プラグマ TITLEのみ実装

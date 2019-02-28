@@ -1,5 +1,8 @@
 "use strct";
 
+// version 0.1.0 novelviewer
+// License MIT  (C) 2019 MITH@mmk
+
 // main script for NovelViewer
 // Electronのモジュール
 const electron = require("electron");
@@ -63,6 +66,7 @@ app.on("ready", () => {
     loadFile(event);
   });
 
+  // ファイルを読む
   ipcMain.on('fileload', (event, arg) => {
     console.log(arg);
     console.log("load " + arg);
@@ -70,6 +74,7 @@ app.on("ready", () => {
     loadFile(event);
   });
 
+  // リロード
   ipcMain.on('reload', (event, arg) => {
     console.log("reload");
     loadFile(event);
@@ -83,16 +88,16 @@ app.on("ready", () => {
         const conv  = new novelconv.NovelFormatConverter(lines); 
         opt['style'] = ['noheader'];
         text = novelconv.createHTMLPage(conv,opt);
-        event.sender.send('body', text);
+        event.sender.send('body', text);  //本文
         opt['style'] = ['index'];
         text = novelconv.createHTMLPage(conv,opt);
-        event.sender.send('index', text);
+        event.sender.send('index', text); //目次
     });
   }
 });
 
 
-
+// コマンドライン
   const optionDefinitions = [
     {
       name: 'help',

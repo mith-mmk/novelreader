@@ -1,3 +1,5 @@
+@charset "UTF-8";
+/* Viwer Tategaki */
 body {
     -webkit-writing-mode: vertical-rl;
     -ms-writing-mode: tb-rl;

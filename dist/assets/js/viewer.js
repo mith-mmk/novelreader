@@ -1,6 +1,6 @@
 /*
-  viewer.js is viewing setter for novelconv.py
-  License see novelconv.py
+  viewer.js is viewing setter for novelconv.py / novelviewer on Node.js
+  License MIT -> see novelconv.py or  novelconv.js
   - Write Yokogaki/Tategaki
   - Color setting
   - Font size
