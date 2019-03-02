@@ -9,7 +9,7 @@ const electron = require("electron");
 
 //　コマンドラインパーサー
 const commandLineArgs = require('command-line-args');
-const novelconv = require('./novelconv');
+const novelconv = require('./js/novelconv');
 
 // アプリケーションをコントロールするモジュール
 const app = electron.app;
@@ -92,7 +92,8 @@ app.on("ready", () => {
         opt['style'] = ['index'];
         text = novelconv.createHTMLPage(conv,opt);
         event.sender.send('index', text); //目次
-    });
+        event.sender.send('title', conv.getTitle()); //タイトル
+      });
   }
 });
 

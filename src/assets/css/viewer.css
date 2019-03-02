@@ -1,0 +1,33 @@
+@charset "UTF-8";
+/* Viwer Tokogaki */
+
+.body {
+    writing-mode: horizontal-tb;
+    overflow-wrap: normal;
+    overflow-x: auto;
+    overflow-y: scroll; 
+}
+
+.novel {
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.footer {
+    top: 6rem;
+    opacity : 0.8;
+    width: 12.5rem;
+    height: 90vh;
+    right: 0;
+    position: fixed;
+    grid-column: 2;
+    grid-row: 1 / 2;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: none;
+}
+

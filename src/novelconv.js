@@ -3,8 +3,6 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
 };
-// version 0.1.0 novel conveet library
-// License MIT  (C) 2019 MITH@mmk
 var NovelFormatConverter = /** @class */ (function () {
     function NovelFormatConverter(lines) {
         this.lines = lines;
@@ -142,6 +140,37 @@ var NovelFormatConverter = /** @class */ (function () {
     };
     NovelFormatConverter.prototype.getConverted = function () {
         return this.converted;
+    };
+    NovelFormatConverter.prototype.getTitle = function () {
+        if (this.converted)
+            return this.title;
+        else
+            return "";
+    };
+    //return JSON Index
+    NovelFormatConverter.prototype.getIndex = function (opt) {
+        var chapters = this.getChapters();
+        var i = 1;
+        var k = 0;
+        //目次作成
+        var json = [];
+        for (var chap in chapters) {
+            chap = chapters[chap];
+            k++;
+            var chapter_json = { no: k, chapter_no: i, name: chap, sections: [] };
+            json.push(chapter_json);
+            var sec = this.getSections(i);
+            var j = 1;
+            for (var ses in sec) {
+                ses = sec[ses];
+                k++;
+                var section_json = { no: k, section_no: j, name: ses };
+                chapter_json.sections.push(section_json);
+                j++;
+            }
+            i++;
+        }
+        return json;
     };
     NovelFormatConverter.prototype.createIndex = function (opt) {
         var label = NovelFormatConverter.template(__makeTemplateObject(["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"], ["<label for=\"label", "\">", " ", "</label><input type=\"radio\" name=\"menu\" id=\"label", "\" class=\"cssacc\" />"]), "chapter", "num", "text", "chapter");

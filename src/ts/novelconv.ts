@@ -1,6 +1,19 @@
 'use strict';
 // version 0.1.0 novel conveet library
 // License MIT  (C) 2019 MITH@mmk
+
+interface Section {
+    no:number;
+    section_no:number;
+    name:string;
+}
+
+interface Chapter {
+    no:number;
+    chapter_no:number;
+    name:string;
+    sections:Section[];
+}
 class NovelFormatConverter{
     chapter: number;
     section: number;
@@ -167,6 +180,38 @@ class NovelFormatConverter{
 
     getConverted():boolean {
         return this.converted;
+    }
+
+    getTitle():string {
+        if(this.converted) return this.title;
+        else return "";
+    }
+
+    //return JSON Index
+
+    getIndex(opt :any):any {
+        const chapters = this.getChapters();
+        let i=1;
+        let k=0;
+        //目次作成
+        let json :Chapter[]= [];
+        for (let chap in chapters){
+            chap = chapters[chap];
+            k ++;
+            const chapter_json :Chapter = {no:k,chapter_no:i,name:chap,sections: []};
+            json.push(chapter_json);
+            const sec = this.getSections(i);
+            let j = 1;
+            for (let ses in sec){
+                ses = sec[ses];
+                k ++;
+                const section_json :Section = {no:k,section_no:j,name:ses };
+                chapter_json.sections.push(section_json);
+                j ++;
+            }
+            i ++;
+        }
+        return json;
     }
 
     createIndex(opt :any) :string {

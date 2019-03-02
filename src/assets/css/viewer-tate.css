@@ -1,0 +1,38 @@
+@charset "UTF-8";
+/* Viwer Tategaki */
+
+.body {
+    -webkit-writing-mode: vertical-rl;
+    -ms-writing-mode: tb-rl;
+    writing-mode: vertical-rl;
+    line-height: 200%;
+    overflow-wrap: normal;
+    overflow-x: auto;
+    overflow-y: auto; 
+    margin: 30px,30px,30px,30px;
+    right: 0;
+}
+
+.novel {
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+
+div.footer {
+    -webkit-writing-mode: vertical-rl;
+    -ms-writing-mode: tb-rl;
+    writing-mode: vertical-rl;
+    display: none;
+    height: 12.5rem;
+    width: 90%;
+    bottom: 40px;
+    right: 30px;
+    position: fixed;
+    overflow-y: hidden;
+    overflow-x: auto;
+    opacity: 0.8;
+}
+

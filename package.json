@@ -1,0 +1,98 @@
+{
+  "name": "novelreader",
+  "version": "0.1.1",
+  "description": "Novelconversion liblary and tools",
+  "main": "src/main.js",
+  "author":{
+    "name" : "MITH@mmk",
+    "email": "47620686+mith-mmk@users.noreply.github.com",
+    "url" : "https://github.com/mith-mmk/"
+  },
+  
+  "license": "MIT",
+
+  "dependencies": {
+    "command-line-args": "^5.0.2",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "@types/node": "^11.10.1",
+    "devtron": "^1.4.0",
+    "electron": "^4.0.6",
+    "electron-packager": "^13.1.0",
+    "electron-builder": "^20.38.5"
+  },
+  "scripts": {
+    "clean": "rm -rf ./dist/*",
+    "pack": "electron-builder --dir",
+    "dist": "nmp run dist:*",
+    "dist:mac": "electron-builder --mac",
+    "dist:win64": "electron-builder --win --x64",
+    "dist:win32": "electron-builder --win --ia32",
+    "dist:linux": "electron-builder --linux",
+    "build": "tsc ./src/ts/novelconv.ts --outDir ./dist/",
+    "releace": "node run releace:*",
+    "releace:mac": "./node_modules/.bin/electron-packager ./dist --platform darwin --out ./packages",
+    "releace:win32": "bash buildwin32.sh",
+    "releace:linux": "./node_modules/.bin/electron-packager ./dist --platform linux --arch all --out ./packages",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mith-mmk/novelreader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mith-mmk/novelreader/issues"
+  },
+  "homepage": "https://github.com/mith-mmk/novelreader#readme",
+  "build": {
+    "productName": "Novel Reader",
+    "appId": "io.github.mith-mmk.novelreader",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "icons/icon.*"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "icons/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.utility"
+    },
+    "win": {
+      "icon": "icons/icon.ico",
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    },
+    "linux": {
+      "icon": "icons",
+      "target": [
+        "zip",
+        "deb",
+        "rpm"
+      ],
+      "category": "Utility"
+    }
+  }
+}

@@ -3,6 +3,9 @@ package-lock.json
 electron
 test/
 .vscode/
-novelreader-darwin-x64/
-out/*
 electron
+/dist/mac/
+/dist/Novel Reader.app/
+/dist/win-unpacked/
+/dist/*.blockmap
+/dist/*.y*

@@ -11,9 +11,10 @@
 
 let _mode = 0;   // yoko
 let _fontelm = null;
-let css_path = 'assets/css'
-let js_path = 'assets/js'
-let apimode = 'cgi'
+let css_path = 'assets/css';
+let js_path = 'assets/js';
+let apimode = 'cgi';
+let titleelm;
 
 window.onload = function loadBody(){
     let json = getSetting();
@@ -60,6 +61,11 @@ window.onload = function loadBody(){
         menuelm.appendChild(reloadelm);
         menuelm.appendChild(dialogelm);
         const { ipcRenderer } = require('electron');
+        ipcRenderer.on('title', (event, arg) => {
+            console.log("title");
+            const elm = titleelm;
+            elm.innerText = arg;
+        });
         ipcRenderer.on('body', (event, arg) => {
             console.log("body");
             const elm = document.getElementById("novel");
@@ -107,6 +113,10 @@ window.onload = function loadBody(){
         ipcRenderer.send('init', true);
 
     }
+
+    titleelm = document.createElement("span");
+    titleelm.id = 'header-title';
+    headerelm.appendChild(titleelm);
 
     const fontelm = document.createElement("div");
     fontelm.id = 'fontmenu';

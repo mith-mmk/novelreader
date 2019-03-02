@@ -6,11 +6,92 @@ body {
     display: grid;
     -webkit-text-size-adjust: 100%;
     z-index: 1;
+    right:"";
+    position: fixed;
 }
 
 .header{
     z-index: 2;
+    display: grid;
+    grid-column: 1;
+    grid-row: 1;
+    width: auto;
+    height: 40px;
+    position: fixed;
+    top: 0;
+    width: 100vw;
 }
+
+
+.body{
+    top: 60px;
+    position:fixed;
+    right: 0;
+    width: 100vw;
+    height: Calc(100vh - 60px);
+}
+
+/* ヘッダ周り */
+
+.header {
+    width: 100vw;
+}
+
+.button {
+    border-color: black;
+    border-bottom-color: #cccccc;
+    background-color: cornsilk;
+    margin: 0.5rem;
+    height: 2.5rem;
+    width: 2.5rem
+}
+
+.switchbutton, .fontbutton, .menubutton, .reloadbutton, .browsebutton, .selector{
+    position: absolute; 
+    padding: 0;
+}
+
+.reloadbutton, .browsebutton {
+    font-size: 120%;
+}
+
+.menubutton{
+    right: 2rem;
+}
+
+.selector{
+    right: 10rem;
+    top: 1rem;
+    width:  8rem;
+    height: 1.2rem;
+}
+
+.fontbutton{
+    right: 5rem;
+}
+
+#header-title{
+    top: 0px;
+    position: fixed;
+    width : 60vw;
+    left: 20vw;
+    text-align: center;
+    font-size:150%;
+    font-weight: "bold";
+}
+
+
+.switchbutton{
+    left: 1rem;
+}
+.reloadbutton{
+    left: 6.4rem;
+}
+
+.browsebutton{
+    left: 3.7rem;
+}
+
 
 .footer{
     z-index: 3;
@@ -109,23 +190,6 @@ select{
 
 /* 目次周り */
 
-.button {
-    border-color: black;
-    border-bottom-color: #cccccc;
-    background-color: cornsilk;
-    margin: 0.5rem;
-    height: 2.5rem;
-    width: 2.5rem
-}
-
-.switchbutton, .fontbutton, .menubutton, .reloadbutton, .browsebutton, .selector{
-    position: fixed;
-    padding: 0;
-}
-
-.reloadbutton, .browsebutton {
-    font-size: 120%;
-}
 
 div.footer a ,div.footer a:visited{
     text-decoration: none;
