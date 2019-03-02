@@ -7,7 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mith_mmk",
-  "email": "47620686+mith-mmk@users.noreply.github.com",
   "license": "MIT",
   "devDependencies": {
     "devtron": "^1.4.0"

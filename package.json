@@ -25,10 +25,8 @@
   "scripts": {
     "clean": "rm -rf ./dist/*",
     "pack": "electron-builder --dir",
-    "dist": "nmp run dist:*",
     "dist:mac": "electron-builder --mac",
-    "dist:win64": "electron-builder --win --x64",
-    "dist:win32": "electron-builder --win --ia32",
+    "dist:win": "electron-builder --win --x64 --ia32",
     "dist:linux": "electron-builder --linux",
     "build": "tsc ./src/ts/novelconv.ts --outDir ./dist/",
     "releace": "node run releace:*",
@@ -86,13 +84,12 @@
       ]
     },
     "linux": {
-      "icon": "icons",
+      "icon": "icons/icon.icns",
       "target": [
         "zip",
         "deb",
         "rpm"
-      ],
-      "category": "Utility"
+      ]
     }
   }
 }
