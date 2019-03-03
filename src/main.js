@@ -1,6 +1,6 @@
 "use strct";
 
-// version 0.1.0 novelviewer
+// version 0.1.1 novelviewer
 // License MIT  (C) 2019 MITH@mmk
 
 // main script for NovelViewer
@@ -81,9 +81,9 @@ app.on("ready", () => {
   });
 
   function loadFile(event) {
-    const fs = require('fs');
+//    const fs = require('fs');
 //    fs.readFile(filename, {encoding: "utf-8"},function (e,text) {
-      charsetAutoDetectFileRead(filename,(e,text) => {
+      charsetAutoDetectFileRead(filename,(e,text) => {  // 文字コードを自動判別してファイルをロードする
         if(e) throw err;
         const lines = text.split(/\n/g);
         const conv  = new novelconv.NovelFormatConverter(lines); 
@@ -96,20 +96,20 @@ app.on("ready", () => {
         event.sender.send('title', conv.getTitle()); //タイトル
       });
   }
-
+/* fs.readFileをそのまま置き換えられる様にしたラッパー関数 */
   function charsetAutoDetectFileRead(filename,callback){
     const fs = require('fs');
 
     const charsetDetect = (filename) => {
-      return new Promise((result, reject) => {
+      return new Promise((result, reject) => {  //おまじない
         try {
           const fd = fs.openSync(filename, "r");
-          let buffer = Buffer.alloc(1024); // 最初の1024byteだけ呼んで文字コードを判別
+          let buffer = Buffer.alloc(1024); // 最初の1024byteから文字コードを判別　全部読み出すと処理が重くなるため
           fs.read(fd, buffer, 0, 1024, 0, (err, byteRead, buffer) => {
             if (err)
               reject(err);
             const jschardet = require('jschardet');
-            const encoding = jschardet.detect(buffer);
+            const encoding = jschardet.detect(buffer);  // 文字コードを確認
             fs.closeSync(fd); // 一回閉じる
             result({filename: filename, encoding: encoding.encoding,callback: callback});
           });
@@ -127,15 +127,16 @@ app.on("ready", () => {
           
         try {
           const iconv = require('iconv-lite');
-          const stream = fs.createReadStream(filename).pipe(iconv.decodeStream(encoding));
+          const stream = fs.createReadStream(filename).pipe(iconv.decodeStream(encoding));  //文字コード変換ルーチン
           let text = '';
-          stream.on("data",(chunk) => {text += chunk;})
-          stream.on('end', () => {
+          stream.on("data",(chunk) => {text += chunk;})   // データを読み込んだらバッファに追加
+          stream.on('end', () => {                        // 読み終わったらコールバック関数に返す
             callback(null,text);
           });
         }
-        catch (e) {
-          throw e;
+        catch (err) {
+          callback(err,null);
+//          throw e;
         }
       })
       .catch( (e) => {console.log("error" + e)});
