@@ -184,21 +184,61 @@ function setTakeYoko(json){
 }
 
 function changeTate(id){
-    let scrollpos = 'header';
+    const el = document.getElementById(id);
+    const before = getScrollPos(el);
     let css = document.getElementById('viewer-css');
     css.href=(css_path + "/viewer-tate.css");
-    document.getElementById(scrollpos).scrollIntoView(true) ;
+    setTimeout(function (){
+        const after = getScrollPos(el);
+        const offset = calcScrollPos(before,after,true);
+        console.log(before);
+        console.log(after);
+        console.log(offset);
+        el.scrollLeft = offset;
+    },100); 
+
     _mode = 1;
     setSetting();
 }
 
 function changeYoko(id){
-    let scrollpos = 'header';
+    const el =  document.getElementById(id);
+    const before = getScrollPos(el);
     let css = document.getElementById('viewer-css');
     css.href=(css_path + "/viewer.css");
-    document.getElementById(scrollpos).scrollIntoView(true) ;
+    setTimeout(function (){
+        const after = getScrollPos(el);
+        const offset = calcScrollPos(before,after,false);
+        console.log(before);
+        console.log(after);
+        console.log(offset);
+        el.scrollTop = offset;
+    },100); 
+
     _mode = 0;
     setSetting();
+}
+
+function getScrollPos(el){
+    return {
+        scrollTop: el.scrollTop,
+        scrollLeft: el.scrollLeft,
+        scrollWidth: el.scrollWidth,
+        scrollHeight: el.scrollHeight,
+        clientWidth: el.clientWidth
+    }
+}
+
+function calcScrollPos(before,after,mode){
+    let offset;
+    if(mode) {
+        // left
+        offset =  after.scrollWidth - (before.scrollTop /  before.scrollHeight * after.scrollWidth) - before.clientWidth;
+    } else { 
+        //top
+        offset =  (before.scrollWidth - before.scrollLeft - before.clientWidth) * after.scrollHeight / before.scrollWidth ;
+    }
+    return offset;
 }
 
 function setColor(){
@@ -232,9 +272,9 @@ function setFontSize(fmode){
 
 function changestyle(){
     if(_mode === 0) {    //switch tate
-        changeTate("novel");
+        changeTate("body");
     } else {            //switch yoko
-        changeYoko("novel");
+        changeYoko("body");
     }
 }
 

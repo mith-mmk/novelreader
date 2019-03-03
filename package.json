@@ -29,7 +29,7 @@
     "dist:mac": "./node_modules/.bin/electron-builder --mac",
     "dist:win": "./node_modules/.bin/electron-builder --win --x64 --ia32",
     "dist:linux": "./node_modules/.bin/electron-builder --linux",
-    "build": "tsc ./src/ts/novelconv.ts --outDir ./dist/",
+    "build": "tsc ./src/ts/novelconv.ts --outDir ./src/js",
     "release": "npm run build && npm run dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
