@@ -21,15 +21,24 @@ const dialog = electron.dialog;
 // メインウィンドウはGCされないようにグローバル宣言
 let mainWindow = null;
 let filename = '';
+let force_quit = false;
 
-// 全てのウィンドウが閉じたら終了
+// 全てのウィンドウが閉じたら終了 MACはDockにアプリを残す
 app.on("window-all-closed", () => {
   if (process.platform != "darwin") {
     app.quit();
   }
 });
 
+
 let opt = {css_path: './assets/css',js_path: './assets/js',mode: "electron"};
+
+
+// プロセスを終了させるときにだけmainWindowsを削除する
+app.on('will-quit', function () {
+  mainWindow = null;
+});
+
 
 // Electronの初期化完了後に実行
 app.on("ready", () => {
@@ -39,15 +48,37 @@ app.on("ready", () => {
   //使用するhtmlファイルを指定する
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-// ファイルが指定してなければファイルをロード
-  mainWindow.on("show", () => {
-
+ 
+  // ウィンドウが閉じられたらアプリも終了させる
+  // MACの場合はウィンドウを隠すだけで終了させない処理が必要になるので
+  // closeさせないでhideする
+  mainWindow.on("close", (e) => {    
+    if (process.platform == "darwin") {
+      if(!force_quit){
+        e.preventDefault()
+        if(mainWindow){
+          if(mainWindow.isDestroyed())
+            console.log("main window is already destroy");
+          else
+            mainWindow.hide();
+            return;
+        } else 
+          console.log("mainwindow is already null")
+      }
+    }
   });
-  // ウィンドウが閉じられたらアプリも終了
-  mainWindow.on("closed", () => {
-    mainWindow = null;
+
+  // MAC用 強制終了処理が入ったときにだけウィンドウを強制終了させるフラグを立てる
+  app.on('before-quit', (e) => {
+    force_quit = true;
   });
 
+  // MAC用 hideしたwindowを再表示する
+  app.on('activate', function(){
+    mainWindow.show();
+  });
+
+  // ブラウザ側から呼び出された初期化イベントを処理する
   ipcMain.on('init', (event, arg) => {
     if(filename == undefined) {
       try {
@@ -80,6 +111,7 @@ app.on("ready", () => {
     loadFile(event);
   });
 
+// テキストファイルを読んで　HTMLに変換する
   function loadFile(event) {
 //    const fs = require('fs');
 //    fs.readFile(filename, {encoding: "utf-8"},function (e,text) {

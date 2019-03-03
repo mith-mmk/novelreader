@@ -23,14 +23,14 @@
     "electron-builder": "^20.38.5"
   },
   "scripts": {
-    "clean": "rm -f ./dist/.icon-set/ ./dist/Novel Reader.app/* ./dist/mac ./dist/*unpacked/ ./dist/*.blockmap ./dist/*.y*",
+    "clean": "rm -Rf ./dist/.icon-set/ ./dist/Novel Reader.app/* ./dist/mac ./dist/*unpacked/ ./dist/*.blockmap ./dist/*.y*",
     "pack": "./node_modules/.bin/electron-builder --dir",
     "dist": "npm run dist:mac && npm run dist:win && npm run dist:linux && npm run clean",
     "dist:mac": "./node_modules/.bin/electron-builder --mac",
     "dist:win": "./node_modules/.bin/electron-builder --win --x64 --ia32",
     "dist:linux": "./node_modules/.bin/electron-builder --linux",
     "build": "tsc ./src/ts/novelconv.ts --outDir ./dist/",
-    "releace": "npm run build && npm run dist",
+    "release": "npm run build && npm run dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
