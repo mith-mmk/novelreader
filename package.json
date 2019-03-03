@@ -1,19 +1,19 @@
 {
   "name": "novelreader",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Novelconversion liblary and tools",
   "main": "src/main.js",
-  "author":{
-    "name" : "MITH@mmk",
+  "author": {
+    "name": "MITH@mmk",
     "email": "47620686+mith-mmk@users.noreply.github.com",
-    "url" : "https://github.com/mith-mmk/"
+    "url": "https://github.com/mith-mmk/"
   },
-  
   "license": "MIT",
-
   "dependencies": {
     "command-line-args": "^5.0.2",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "iconv-lite": "^0.4.24",
+    "jschardet": "^2.1.0"
   },
   "devDependencies": {
     "@types/node": "^11.10.1",
@@ -23,16 +23,14 @@
     "electron-builder": "^20.38.5"
   },
   "scripts": {
-    "clean": "rm -rf ./dist/*",
-    "pack": "electron-builder --dir",
-    "dist:mac": "electron-builder --mac",
-    "dist:win": "electron-builder --win --x64 --ia32",
-    "dist:linux": "electron-builder --linux",
+    "clean": "rm -f ./dist/.icon-set/ ./dist/Novel Reader.app/* ./dist/mac ./dist/*unpacked/ ./dist/*.blockmap ./dist/*.y*",
+    "pack": "./node_modules/.bin/electron-builder --dir",
+    "dist": "npm run dist:mac && npm run dist:win && npm run dist:linux && npm run clean",
+    "dist:mac": "./node_modules/.bin/electron-builder --mac",
+    "dist:win": "./node_modules/.bin/electron-builder --win --x64 --ia32",
+    "dist:linux": "./node_modules/.bin/electron-builder --linux",
     "build": "tsc ./src/ts/novelconv.ts --outDir ./dist/",
-    "releace": "node run releace:*",
-    "releace:mac": "./node_modules/.bin/electron-packager ./dist --platform darwin --out ./packages",
-    "releace:win32": "bash buildwin32.sh",
-    "releace:linux": "./node_modules/.bin/electron-packager ./dist --platform linux --arch all --out ./packages",
+    "releace": "npm run build && npm run dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

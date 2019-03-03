@@ -71,13 +71,16 @@ body {
 }
 
 #header-title{
-    top: 0px;
+    top: 10px;
     position: fixed;
     width : 60vw;
     left: 20vw;
     text-align: center;
-    font-size:150%;
+    font-size: 18pt;
     font-weight: "bold";
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 
