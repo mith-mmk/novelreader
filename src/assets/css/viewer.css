@@ -16,14 +16,12 @@
 }
 
 .footer {
-    top: 6rem;
+    top: 4rem;
     opacity : 0.8;
     width: 12.5rem;
     height: 90vh;
     right: 0;
     position: fixed;
-    grid-column: 2;
-    grid-row: 1 / 2;
     overflow-y: auto;
     overflow-x: hidden;
     padding-left: 10px;
