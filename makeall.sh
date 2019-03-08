@@ -1,2 +1,2 @@
 #!/bin/sh
-nmp run release
+npm run release
