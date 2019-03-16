@@ -1,3 +1,5 @@
+注意：作りかけ
+
 # データの保存場所
 　ブラウザ
 -  Windows
@@ -5,6 +7,7 @@
 -  Linux
 
 # ホスト側のconfig（未実装）
+- ファイル名
 - Window possision(x,y)
 - Window size(width,height)
 

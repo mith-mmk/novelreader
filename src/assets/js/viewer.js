@@ -66,7 +66,7 @@ window.onload = function loadBody(){
     <option value="dark" background="black" color="white">ダークモード</option>\
     <option value="light">ホワイトモード</option>\
     <option value="cornsilk">デフォルト</option></select><BR>\
-    <select name="Font" class="FontSelect" id="font" onchange="setFont()" ><option value="default">フォント</option>\
+    <select name="Font" class="FontSelect" id="fontset" onchange="setFont()" ><option value="default">フォント</option>\
     <option value="serif">明朝</option>\
     <option value="sansserif">ゴシック</option></select><BR>\
     <select name="FontSize" class="SizeSelect" id="fontsize" onchange="setSize()"><option value="default">フォントサイズ</option>\
@@ -276,7 +276,7 @@ function setColor(){
 }
 
 function setFont(){
-    const mode = document.getElementById('font').value;
+    const mode = document.getElementById('fontset').value;
     if(mode !== 'default') setFontSet(mode);
 }
 function setSize(){
