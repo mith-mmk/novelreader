@@ -38,12 +38,46 @@ body {
 }
 
 .button {
-    border-color: black;
-    border-bottom-color: #cccccc;
-    background-color: cornsilk;
+    outline: none;
+    padding-bottom: 2px;
+    border-right:  1px solid #88881c;
+    border-bottom: 1px solid #88881c;
+    background-color:cornsilk;
     margin: 0.5rem;
+    font-size: 12pt;
     height: 2.5rem;
-    width: 2.5rem
+    line-height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
+.button:hover {
+    border-color: transparent;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.button:active {
+    transform: translate3d(1px, 1px, 1px);
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 1px solid #88881c;
+    border-top: 1px solid #88881c;
+    box-shadow: 0 0 0 0;
+}
+
+body[colorset="dark"] .button{
+    background-color: #333333;
+    color: #cccccc;
+    -webkit-text-size-adjust: 100%;
+}
+
+body[colorset="light"] .button{
+    background-color: white;
+    color: black;
+    -webkit-text-size-adjust: 100%;
 }
 
 .switchbutton, .fontbutton, .menubutton, .reloadbutton, .browsebutton, .selector{
@@ -51,19 +85,16 @@ body {
     padding: 0;
 }
 
-.reloadbutton, .browsebutton {
-    font-size: 120%;
-}
 
 .menubutton{
     right: 2rem;
 }
 
 .selector{
-    right: 10rem;
-    top: 1rem;
-    width:  8rem;
-    height: 1.2rem;
+    position: absolute;
+    right: 100%;
+    top: 0%;
+    z-index:20;
 }
 
 .fontbutton{
@@ -71,13 +102,16 @@ body {
 }
 
 #header-title{
-    top: 0px;
+    top: 10px;
     position: fixed;
     width : 60vw;
     left: 20vw;
     text-align: center;
-    font-size:150%;
+    font-size: 18pt;
     font-weight: "bold";
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 
@@ -133,26 +167,26 @@ body[fontset="sansserif"]{
     font-family: sans-serif; 
 }
 
-body[fontsize="XL"]{
+body[fontsize="XL"] .body{
     font-size: 300%;
 }
-body[fontsize="LL"]{
+body[fontsize="LL"] .body{
     font-size: 200%;
 }
 
-body[fontsize="L"]{
+body[fontsize="L"] .body{
     font-size: 150%;
 }
-body[fontsize="M"]{
+body[fontsize="M"] .body{
     font-size: 100%;
 }
-body[fontsize="S"]{
+body[fontsize="S"] .body{
     font-size: 80%;
 }
 
 div.body a,div.body a.visited{
     text-decoration: none;
-    color: red;
+    color: blue;
 }
 
 div.body a:active,div.body a:hover {
@@ -164,10 +198,16 @@ div.list {
     padding-bottom: 10%;
 }
 
-div.list a:active,div.body a:hover {
-    color: black;
-    background-color: aqua;
+body[colorset="dark"] div.body a,div.body a.visited{
+    text-decoration: none;
+    color: red;
 }
+
+body[colorset="dark"] div.list a:active,div.body a:hover {
+    color:  white;
+    background-color: grey;
+}
+
 
 .selector{
     writing-mode:horizontal-tb;
@@ -196,19 +236,25 @@ div.footer a ,div.footer a:visited{
     color: black;
 }
 
-div.footer a:active,div.footer a:hover {
-    color: blue;
-    background-color: aqua;
+body[colorset="dark"] div.footer a ,div.footer a:visited{
+    color: black;
 }
+
+
+div.footer a:active,div.footer a:hover {
+    color: #ecaf69;
+    background-color: #4e4127;
+}
+
+body[colorset="dark"] div.footer a:active,div.footer a:hover {
+    color: #cccc88;
+    background-color: #666633;
+}
+
 
 div.list a ,div.footer a:visited{
     text-decoration: none;
     color: black;
-}
-
-div.list a:active,div.footer a:hover {
-    color: blue;
-    background-color: aqua;
 }
 
 p {
@@ -227,15 +273,24 @@ p {
     display: block;
     color :#ffeeff;
     font-weight: bold;
-    background : skyblue;
+    background : #726e57;
     cursor :pointer;
+}
+
+body[colorset="dark"] .accbox label {
+    color: black;
+    background: #cccccc;
 }
 
 /*ラベルホバー時*/
 .accbox label:hover {
-    background :#5cbeff;
+    background :#726e57;
 }
 
+body[colorset="dark"] label:hover {
+    background: #776666;
+
+}
 /*チェックは隠す*/
 .accbox input {
     display: none;
@@ -255,6 +310,10 @@ p {
     height: auto;
     width: auto;
     padding: 5px;
-    background: #eaeaea;
+    background: #ffeacc;
     opacity: 1;
+}
+
+body[colorset="dark"] .cssacc:checked + .accshow {
+    background: #eaeaea;
 }

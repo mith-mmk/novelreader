@@ -1,2 +1,0 @@
-PATH='/Applications/Wine Staging.app/Contents/Resources/start/bin:/Applications/Wine Staging.app/Contents/Resources/wine/bin:'$PATH
-./node_modules/.bin/electron-packager ./dist --platform=win32 --arch=all --out ./packages

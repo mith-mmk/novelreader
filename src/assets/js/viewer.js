@@ -34,10 +34,62 @@ window.onload = function loadBody(){
     const menuelm = document.createElement("div");
     menuelm.id = 'menu';
     menuelm.className = 'menu';
+/*
     menuelm.innerHTML ='\
     <input type="button" id="tateyoko" class="switchbutton button" onClick="changestyle()" value="縦横"> \
     <input type="button" id="fontmenu" class="fontbutton button" onClick="switchFontMenu()" value="Aあ"> \
     <input type="button" id="indexmenu" class="menubutton button" onClick="switchMenu()" value="目次">'
+*/
+    const tateyokoelm = document.createElement("a");
+    tateyokoelm.id = "tateyoko";
+    tateyokoelm.innerHTML ="縦横";
+    tateyokoelm.classList.add("switchbutton");
+    tateyokoelm.classList.add("button");
+
+    const fontmenuelm = document.createElement("a");
+    fontmenuelm.id = "fontmenu";
+    fontmenuelm.innerHTML = "Aあ";
+    fontmenuelm.classList.add ("button");
+
+    const indexmenuelm = document.createElement("a");
+    indexmenuelm.id = "indexmenu";
+    indexmenuelm.innerHTML = "目次";
+    indexmenuelm.classList.add("menubutton");
+    indexmenuelm.classList.add("button");
+
+    const fontelm = document.createElement("span");
+    fontelm.id = 'font';
+    fontelm.innerHTML= '\
+    <span class="selector">\
+    <select name="Color" class="ColorSelect" id="color" onchange="setColor()">\
+    <option value="default" >カラー</option>\
+    <option value="dark" background="black" color="white">ダークモード</option>\
+    <option value="light">ホワイトモード</option>\
+    <option value="cornsilk">デフォルト</option></select><BR>\
+    <select name="Font" class="FontSelect" id="fontset" onchange="setFont()" ><option value="default">フォント</option>\
+    <option value="serif">明朝</option>\
+    <option value="sansserif">ゴシック</option></select><BR>\
+    <select name="FontSize" class="SizeSelect" id="fontsize" onchange="setSize()"><option value="default">フォントサイズ</option>\
+    <option value="XL">超大</option>\
+    <option value="LL">特大</option>\
+    <option value="L">大</option>\
+    <option value="M">通常</option>\
+    <option value="S">小</option></select></span>'
+    _fontelm = fontelm;
+    fontelm.style.display = 'none';
+    const packelm = document.createElement("span");
+    packelm.appendChild(fontmenuelm);
+    packelm.append(fontelm);
+    packelm.classList.add ("fontbutton");
+
+    menuelm.append(tateyokoelm);
+    menuelm.append(packelm);
+    menuelm.append(indexmenuelm);
+
+    tateyokoelm.addEventListener("click",() => {changestyle();});
+    fontmenuelm.addEventListener("click",() => {switchFontMenu();});
+    indexmenuelm.addEventListener("click",() => {switchMenu();});
+
 
     if (apimode == 'webview') {
         menuelm.innerHTML +='\
@@ -46,13 +98,13 @@ window.onload = function loadBody(){
     }
 
     if (apimode == 'electron') {
-        reloadelm = document.createElement("button");
+        const reloadelm = document.createElement("a");
         reloadelm.id = "reload";
         reloadelm.innerHTML ="&#x1f504;";
         reloadelm.classList.add("reloadbutton");
         reloadelm.classList.add("button");
 
-        dialogelm = document.createElement("button");
+        const dialogelm = document.createElement("a");
         dialogelm.id = "dialog";
         dialogelm.innerHTML = "&#x1f4c1;";
         dialogelm.classList.add("browsebutton");
@@ -118,29 +170,6 @@ window.onload = function loadBody(){
     titleelm.id = 'header-title';
     headerelm.appendChild(titleelm);
 
-    const fontelm = document.createElement("div");
-    fontelm.id = 'fontmenu';
-    fontelm.innerHTML= '\
-    <div class="selector">\
-    <select name="Color" class="ColorSelect" id="color" onchange="setColor()">\
-    <option value="default" >カラー</option>\
-    <option value="dark" background="black" color="white">ダークモード</option>\
-    <option value="light">ホワイトモード</option>\
-    <option value="cornsilk">デフォルト</option></select><BR>\
-    <select name="Font" class="FontSelect" id="font" onchange="setFont()" ><option value="default">フォント</option>\
-    <option value="serif">明朝</option>\
-    <option value="sansserif">ゴシック</option></select><BR>\
-    <select name="FontSize" class="SizeSelect" id="fontsize" onchange="setSize()"><option value="default">フォントサイズ</option>\
-    <option value="XL">超大</option>\
-    <option value="LL">特大</option>\
-    <option value="L">大</option>\
-    <option value="M">通常</option>\
-    <option value="S">小</option></select></div>'
-
-    fontelm.style.display = 'none';
-//    elm.style.display = 'table';
-    menuelm.appendChild(fontelm);
-    _fontelm = fontelm;
     headerelm.appendChild(menuelm);
 
     setTakeYoko(json);
@@ -184,21 +213,61 @@ function setTakeYoko(json){
 }
 
 function changeTate(id){
-    let scrollpos = 'header';
+    const el = document.getElementById(id);
+    const before = getScrollPos(el);
     let css = document.getElementById('viewer-css');
     css.href=(css_path + "/viewer-tate.css");
-    document.getElementById(scrollpos).scrollIntoView(true) ;
+    setTimeout(function (){
+        const after = getScrollPos(el);
+        const offset = calcScrollPos(before,after,true);
+        console.log(before);
+        console.log(after);
+        console.log(offset);
+        el.scrollLeft = offset;
+    },100); 
+
     _mode = 1;
     setSetting();
 }
 
 function changeYoko(id){
-    let scrollpos = 'header';
+    const el =  document.getElementById(id);
+    const before = getScrollPos(el);
     let css = document.getElementById('viewer-css');
     css.href=(css_path + "/viewer.css");
-    document.getElementById(scrollpos).scrollIntoView(true) ;
+    setTimeout(function (){
+        const after = getScrollPos(el);
+        const offset = calcScrollPos(before,after,false);
+        console.log(before);
+        console.log(after);
+        console.log(offset);
+        el.scrollTop = offset;
+    },100); 
+
     _mode = 0;
     setSetting();
+}
+
+function getScrollPos(el){
+    return {
+        scrollTop: el.scrollTop,
+        scrollLeft: el.scrollLeft,
+        scrollWidth: el.scrollWidth,
+        scrollHeight: el.scrollHeight,
+        clientWidth: el.clientWidth
+    }
+}
+
+function calcScrollPos(before,after,mode){
+    let offset;
+    if(mode) {
+        // left
+        offset =  after.scrollWidth - (before.scrollTop /  before.scrollHeight * after.scrollWidth) - before.clientWidth;
+    } else { 
+        //top
+        offset =  (before.scrollWidth - before.scrollLeft - before.clientWidth) * after.scrollHeight / before.scrollWidth ;
+    }
+    return offset;
 }
 
 function setColor(){
@@ -207,7 +276,7 @@ function setColor(){
 }
 
 function setFont(){
-    const mode = document.getElementById('font').value;
+    const mode = document.getElementById('fontset').value;
     if(mode !== 'default') setFontSet(mode);
 }
 function setSize(){
@@ -232,9 +301,9 @@ function setFontSize(fmode){
 
 function changestyle(){
     if(_mode === 0) {    //switch tate
-        changeTate("novel");
+        changeTate("body");
     } else {            //switch yoko
-        changeYoko("novel");
+        changeYoko("body");
     }
 }
 
@@ -242,7 +311,7 @@ menumode = false;
 
 function switchFontMenu(){
     let elm = _fontelm;
-    if(elm.style.display !== 'none'){
+    if(elm.style.display != 'none'){
         elm.style.display = 'none';
     }else{
         elm.style.display = 'block';
