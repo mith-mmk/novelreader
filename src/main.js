@@ -45,7 +45,7 @@ app.on("ready", () => {
   const { ipcMain } = require('electron');
  // 初期ウィンドウを800 * 600 に設定
   mainWindow = new BrowserWindow({width: 800, height: 600, useContentSize: true,webPreferences:{nodeIntegration: true}});
-  //使用するhtmlファイルを指定する
+//使用するhtmlファイルを指定する
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
  
