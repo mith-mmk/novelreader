@@ -12,16 +12,17 @@
   "dependencies": {
     "command-line-args": "^5.1.1",
     "express": "^4.17.1",
-    "iconv-lite": "^0.4.24",
-    "jschardet": "^2.1.0",
-    "npm-check-updates": "^3.1.10"
+    "iconv-lite": "^0.6.1",
+    "jschardet": "^2.2.1",
+    "npm-check-updates": "^7.0.1",
+    "update-electron-app": "^1.5.0"
   },
   "devDependencies": {
-    "@types/node": "^11.13.13",
+    "@types/node": "^14.0.18",
     "devtron": "^1.4.0",
-    "electron": "^5.0.3",
-    "electron-builder": "^20.43.0",
-    "electron-packager": "^13.1.1"
+    "electron": "^9.1.0",
+    "electron-builder": "^22.7.0",
+    "electron-packager": "^15.0.0"
   },
   "scripts": {
     "clean": "rm -Rf ./dist/.icon-set/ ./dist/Novel Reader.app/* ./dist/mac ./dist/*unpacked/ ./dist/*.blockmap ./dist/*.y*",
