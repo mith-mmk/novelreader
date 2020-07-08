@@ -82,12 +82,13 @@ app.on("ready", () => {
   ipcMain.on('init', (event, arg) => {
     if(filename == undefined) {
       try {
-        let filenames = dialog.showOpenDialog({
+        console.log('open dialog');
+        let filenames = dialog.showOpenDialogSync({
           properties: ['openFile'],
           title: '小説ファイルを選択してください',
           filters: [
             {'text':'txt'},
-           {'All':'*'}]
+            {'All':'*'}]
         });
         filename = filenames[0];
       } catch {
@@ -115,6 +116,7 @@ app.on("ready", () => {
   function loadFile(event) {
 //    const fs = require('fs');
 //    fs.readFile(filename, {encoding: "utf-8"},function (e,text) {
+      console.log(filename);
       charsetAutoDetectFileRead(filename,(e,text) => {  // 文字コードを自動判別してファイルをロードする
         if(e) throw err;
         const lines = text.split(/\n/g);
