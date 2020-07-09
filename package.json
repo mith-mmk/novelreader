@@ -1,6 +1,6 @@
 {
   "name": "novelreader",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Novelconversion liblary and tools",
   "main": "src/main.js",
   "author": {
@@ -12,13 +12,13 @@
   "dependencies": {
     "command-line-args": "^5.1.1",
     "express": "^4.17.1",
-    "iconv-lite": "^0.6.1",
+    "iconv-lite": "^0.6.2",
     "jschardet": "^2.2.1",
     "npm-check-updates": "^7.0.1",
     "update-electron-app": "^1.5.0"
   },
   "devDependencies": {
-    "@types/node": "^14.0.18",
+    "@types/node": "^14.0.20",
     "devtron": "^1.4.0",
     "electron": "^9.1.0",
     "electron-builder": "^22.7.0",

@@ -1,18 +1,6 @@
 {
   "name": "novelreader",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Novel Viewer",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "mith_mmk",
-  "license": "MIT",
-  "devDependencies": {
-    "devtron": "^1.4.0"
-  },
-  "dependencies": {
-    "electron": "^5.0.3",
-    "command-line-args": "^5.0.2"
-  }
+  "main": "main.js"
 }

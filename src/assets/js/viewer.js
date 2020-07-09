@@ -136,7 +136,7 @@ window.onload = function loadBody(){
         
         dialogelm.addEventListener("click",function (){
             const dialog = require('electron').remote.dialog;
-            let filenames = dialog.showOpenDialog({
+            let filenames = dialog.showOpenDialogSync({
             properties: ['openFile'],
             title: '小説ファイルを選択してください',
             filters: [

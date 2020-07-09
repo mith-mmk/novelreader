@@ -83,7 +83,7 @@ app.on("ready", () => {
     if(filename == undefined) {
       try {
         console.log('open dialog');
-        let filenames = dialog.showOpenDialogSync({
+        let filenames = dialog.showOpenDialogSync({ // issue: viewer.jsと分離しているのでこちらに持ってくる
           properties: ['openFile'],
           title: '小説ファイルを選択してください',
           filters: [
